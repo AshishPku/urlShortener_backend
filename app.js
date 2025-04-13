@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const shortid = require("shortid");
@@ -17,10 +18,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 mongoose
-  .connect("mongodb://localhost:27017/url-shortener", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster0.gk3s42m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
