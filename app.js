@@ -68,7 +68,7 @@ const initializeUser = async () => {
 };
 initializeUser();
 
-const baseUrl = "http://localhost:3000";
+const baseUrl = "https://urlshortener-backend-ki0x.onrender.com";
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -134,7 +134,6 @@ app.post("/api/shorten", authenticateToken, async (req, res) => {
       urlCode,
       userId: req.user.userId, // Store userId
     });
-
     await url.save();
     res.json(url);
   } catch (err) {
