@@ -5,18 +5,17 @@ const validUrl = require("valid-url");
 const useragent = require("useragent");
 const cors = require("cors");
 const geoip = require("geoip-lite");
-const jwt = require("jsonwebtoken"); // Add JWT
-const bcrypt = require("bcryptjs"); // Add bcrypt for password hashing
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = "your_jwt_secret_key"; // Replace with env variable in production
+const JWT_SECRET = "my_jwt_secret_key";
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// MongoDB Connection
 mongoose
   .connect("mongodb://localhost:27017/url-shortener", {
     useNewUrlParser: true,
@@ -25,7 +24,6 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
-// User Schema
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -33,7 +31,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// URL Schema
 const urlSchema = new mongoose.Schema({
   originalUrl: { type: String, required: true },
   shortUrl: String,
@@ -69,7 +66,6 @@ initializeUser();
 
 const baseUrl = "http://localhost:3000";
 
-// Middleware to Verify JWT
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1]; // Bearer <token>
@@ -87,7 +83,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Login Endpoint
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -112,7 +107,6 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Create Short URL (Authenticated)
 app.post("/api/shorten", authenticateToken, async (req, res) => {
   const { originalUrl } = req.body;
 
@@ -145,7 +139,6 @@ app.post("/api/shorten", authenticateToken, async (req, res) => {
   }
 });
 
-// Redirect and Log Click (No Auth)
 app.get("/:code", async (req, res) => {
   try {
     const url = await Url.findOne({ urlCode: req.params.code });
@@ -180,7 +173,6 @@ app.get("/:code", async (req, res) => {
   }
 });
 
-// Get Analytics for a URL (No Auth)
 app.get("/api/urls/:id/analytics", async (req, res) => {
   try {
     const url = await Url.findById(req.params.id);
@@ -213,7 +205,6 @@ app.get("/api/urls/:id/analytics", async (req, res) => {
   }
 });
 
-// Get All URLs for Authenticated User
 app.get("/api/urls", authenticateToken, async (req, res) => {
   const { page = 1, limit = 10, search = "" } = req.query;
 
@@ -241,7 +232,6 @@ app.get("/api/urls", authenticateToken, async (req, res) => {
   }
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
