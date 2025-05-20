@@ -52,8 +52,8 @@ const urlSchema = new mongoose.Schema({
 
 const Url = mongoose.model("Url", urlSchema);
 const initializeUser = async () => {
-  const email = "intern@dacoid.com";
-  const password = "Test123";
+  const email = "example@gmail.com";
+  const password = "Password123";
   try {
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
